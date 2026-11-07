@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Student System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #071d49, #087b91, #00b99e);
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            padding: 45px 30px;
+            text-align: center;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(15px);
+        }
+
+        h1 {
+            color: #64f5e6;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+
+        .success {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 30px;
+            background: rgba(0, 255, 170, 0.2);
+            color: #7affc8;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .instructions {
+            background: rgba(0, 0, 0, 0.25);
+            color: white;
+            padding: 18px;
+            border-radius: 12px;
+            line-height: 1.8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #25c6db, #00e5a0);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 255, 190, 0.3);
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Academic Student System</h1>
+
+        <p class="subtitle">
+            نظام إدارة وتحليل نتائج الطلاب المتقدم
+        </p>
+
+        <div class="success">
+            ✨ System Initialized Successfully
+        </div>
+
+        <div class="instructions">
+            اضغط على الزر بالأسفل لعرض التقرير الأكاديمي
+            ونتائج الطلاب ولجنة الرأفة في شاشة المطور
+            <br>
+            Developer Console (F12)
+        </div>
+
+        <button id="showResults">
+            📊 عرض نتائج الطلاب في الـ Console
+        </button>
+
+        <p class="footer">
+            Student Management & Academic Analysis System
+        </p>
+
+    </div>
+
+    <script>
+
+        // 1. Student Class & Constructor
+
+        class Student {
+            constructor(id, name, grades, attendance) {
+                this.id = id;
+                this.name = name;
+                this.grades = grades;
+                this.attendance = attendance;
+            }
+
+            // Calculate Average using reduce
+
+            getAverage() {
+                const sum = this.grades.reduce(
+                    (acc, grade) => acc + grade, 0
+                );
+
+                return sum / this.grades.length;
+            }
+
+            // Calculate Grade
+
+            getGrade(average) {
+                if (average >= 90) return "A";
+                else if (average >= 80) return "B";
+                else if (average >= 70) return "C";
+                else if (average >= 60) return "D";
+                else if (average >= 50) return "E";
+                else return "F";
+            }
+
+            // Final Result using &&
+
+            getFinalResult() {
+                const avg = this.getAverage();
+
+                if (avg >= 50 && this.attendance >= 75) {
+                    return "ناجح";
+                } else {
+                    return "يحتاج مراجعة";
+                }
+            }
+        }
+
+
+        // 2. Students Array
+
+        const studentsList = [
+
+            new Student(101, "محمد توفيق قابيل", [85, 90, 88], 92),
+
+            new Student(102, "احمد السيد", [45, 42, 48], 80),
+
+            new Student(103, "سارة علي", [95, 92, 98], 96),
+
+            new Student(104, "محمود خالد", [40, 44, 41], 70)
+
+        ];
+
+
+        // 3. Grace Committee - filter
+
+        const strugglingStudents = studentsList.filter(student => {
+
+            const avg = student.getAverage();
+
+            return avg >= 40 && avg <= 49;
+
+        });
+
+
+        // 4. Add 5 Grace Marks - map
+
+        const afterRafah = strugglingStudents.map(student => {
+
+            const oldAvg = student.getAverage();
+
+            return {
+
+                id: student.id,
+
+                name: student.name,
+
+                oldAverage: oldAvg,
+
+                newAverage: oldAvg + 5
+
+            };
+
+        });
+
+
+        // 5. Calculate New Total using reduce
+
+        const totalNewAverage = afterRafah.reduce(
+
+            (acc, student) => acc + student.newAverage, 0
+
+        );
+
+
+        // 6. Protect from Division by Zero
+
+        const averageAfterRafah = afterRafah.length > 0
+
+            ? totalNewAverage / afterRafah.length
+
+            : 0;
+
+
+        // 7. Display Results in Console
+
+        function showStudentReport() {
+
+            console.log("==================================");
+
+            console.log("   ACADEMIC STUDENT SYSTEM");
+
+            console.log("==================================");
+
+
+            console.log("===== تقرير الطلاب الرئيسي =====");
+
+            studentsList.forEach(student => {
+
+                const avg = student.getAverage();
+
+                console.log(
+
+                    `الاسم: ${student.name} | ` +
+                    `ID: ${student.id} | ` +
+                    `المتوسط: ${avg.toFixed(2)} | ` +
+                    `التقدير: ${student.getGrade(avg)} | ` +
+                    `النتيجة: ${student.getFinalResult()} | ` +
+                    `الحضور: ${student.attendance}%`
+
+                );
+
+            });
+
+
+            console.log("===== الطلاب المتعثرين =====");
+
+            console.table(
+
+                strugglingStudents.map(student => ({
+
+                    الاسم: student.name,
+
+                    المتوسط: student.getAverage().toFixed(2)
+
+                }))
+
+            );
+
+
+            console.log("===== بعد إضافة 5 درجات رأفة =====");
+
+            console.table(afterRafah);
+
+
+            console.log(
+
+                "متوسط درجات الطلاب بعد الرأفة:",
+
+                averageAfterRafah.toFixed(2)
+
+            );
+
+
+            console.log("===== حماية القسمة على صفر =====");
+
+            console.log(
+
+                afterRafah.length > 0
+
+                    ? "يوجد طلاب متعثرين"
+
+                    : "لا يوجد طلاب متعثرين - المتوسط = 0"
+
+            );
+
+            console.log("===== END OF REPORT =====");
+
+        }
+
+
+        // Button Event
+
+        document.getElementById("showResults")
+
+            .addEventListener("click", showStudentReport);
+
+
+        console.log("✨ System Initialized Successfully");
+
+    </script>
+
+</body>
+</html>
